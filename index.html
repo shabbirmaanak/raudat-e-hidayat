@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raudat al-Hidayat • Search Engine & Knowledge Base</title>
+  <meta name="description" content="Comprehensive full-text search engine for Raudat al-Hidayat (روضة هدايات) with Arabic, Lisan al-Dawat, and English translations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="container">
+      <nav class="header-nav">
+        <a href="#" class="brand-logo" onclick="resetFilters(); return false;">
+          <div class="brand-icon">ر</div>
+          <div class="brand-text">
+            <h1>Raudat al-Hidayat</h1>
+            <p>روضة هدايات • Search & Reference Engine</p>
+          </div>
+        </a>
+
+        <div class="header-actions">
+          <!-- Random Kalam Button -->
+          <button class="btn btn-gold" onclick="pickRandomKalam()" title="Random Kalam (r)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 8h.01"></path><path d="M8 8h.01"></path><path d="M8 16h.01"></path><path d="M16 16h.01"></path><path d="M12 12h.01"></path></svg>
+            <span>Random</span>
+          </button>
+
+          <!-- Bookmarks Filter Button -->
+          <button id="favoritesFilterBtn" class="btn btn-icon" onclick="toggleFavoritesOnly()" title="Saved Bookmarks">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span id="favoritesBadgeCount" class="badge badge-primary" style="margin-left:0.25rem;">0</span>
+          </button>
+
+          <!-- Statistics Modal Button -->
+          <button class="btn btn-icon" onclick="openStatsModal()" title="Dataset Statistics">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          </button>
+
+          <!-- Export Dropdown -->
+          <button class="btn btn-icon" onclick="exportData('csv')" title="Export filtered results to CSV">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Export</span>
+          </button>
+
+          <!-- Theme Toggle Button -->
+          <button class="btn btn-icon" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark / Light mode (t)">
+            <span id="themeIcon"></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-arabic-title">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+      <h2 class="hero-title">Rawdat Hidayat Word Search</h2>
+      <p class="hero-subtitle">
+        Explore 600 sacred Kalam with Arabic diacritic-smart full-text search, Lisan al-Dawat translations, and English explanations.
+      </p>
+
+      <!-- Search Box -->
+      <div class="search-wrapper">
+        <div class="search-box">
+          <svg class="search-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search by Arabic (احب الاعمال), Lisan al-Dawat, or English keywords... [Press / to focus]"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="searchClearBtn" class="search-clear-btn" title="Clear Search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <select id="searchScopeSelect" class="search-scope-select" onchange="setScope(this.value)" title="Search Scope">
+            <option value="all">🔍 All Fields</option>
+            <option value="arabic">📜 Arabic Only</option>
+            <option value="ld">📖 Lisan al-Dawat Only</option>
+            <option value="english">🌐 English Only</option>
+            <option value="stated_by">👤 Speaker Only</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Topic Tags -->
+      <div class="quick-topics" id="quickTopicPills"></div>
+    </section>
+
+    <!-- Filters and Controls Bar -->
+    <section class="filter-bar">
+      <div class="filter-top-row">
+        <!-- Volume Tabs -->
+        <div class="volume-tabs">
+          <button class="vol-tab active" data-vol="all" onclick="setVolume('all')">All Volumes (600)</button>
+          <button class="vol-tab" data-vol="روضة هدايات 1" onclick="setVolume('روضة هدايات 1')">روضة هدايات 1 (Rasulullah SA - 200)</button>
+          <button class="vol-tab" data-vol="روضة هدايات 2" onclick="setVolume('روضة هدايات 2')">روضة هدايات 2 (Mawlana Ali SA - 200)</button>
+          <button class="vol-tab" data-vol="روضة هدايات 3" onclick="setVolume('روضة هدايات 3')">روضة هدايات 3 (Aimmat & Duat - 200)</button>
+        </div>
+
+        <!-- Speaker Filter, Sort & View Controls -->
+        <div class="filter-controls-group">
+          <select id="speakerSelect" class="select-control" onchange="setSpeaker(this.value)">
+            <option value="all">All Speakers & Personalities</option>
+          </select>
+
+          <select id="sortSelect" class="select-control" onchange="setSort(this.value)">
+            <option value="default">Sort: Default Order</option>
+            <option value="serial_asc">Sort: Serial # (Ascending)</option>
+            <option value="serial_desc">Sort: Serial # (Descending)</option>
+            <option value="arabic_asc">Sort: Arabic (Alphabetical)</option>
+            <option value="english_asc">Sort: English (A-Z)</option>
+          </select>
+
+          <!-- View Toggle (Grid / Table) -->
+          <div class="view-toggle">
+            <button class="view-btn active" data-view="grid" onclick="setViewMode('grid')" title="Grid Card View">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            </button>
+            <button class="view-btn" data-view="table" onclick="setViewMode('table')" title="Compact Table View">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Status Bar -->
+    <div class="results-summary-bar">
+      <div id="resultsCount">Loading records...</div>
+      <div id="activeFilterChips" class="active-filters-chips"></div>
+    </div>
+
+    <!-- Results Dynamic Container -->
+    <div id="resultsContainer"></div>
+
+    <!-- Pagination -->
+    <div id="paginationBar" class="pagination-bar"></div>
+  </main>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal-backdrop">
+    <div class="modal-container" id="detailModalContainer"></div>
+  </div>
+
+  <!-- Statistics Modal -->
+  <div id="statsModal" class="modal-backdrop">
+    <div class="modal-container" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 style="font-size:1.15rem;font-weight:700;">📊 Dataset Analytics & Statistics</h3>
+        <button class="icon-btn-sm" onclick="closeStatsModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="statsModalBody"></div>
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button class="btn btn-primary" onclick="closeStatsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <div class="container">
+      <p style="margin-bottom:0.35rem;font-weight:600;">Raudat al-Hidayat (روضة هدايات) Interactive Search Engine</p>
+      <p>© 2023 - 2026 • Extracted and compiled from the Google Apps Script Knowledge Base.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data/raudat_data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
