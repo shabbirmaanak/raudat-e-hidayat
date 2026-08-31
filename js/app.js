@@ -19,7 +19,8 @@ const state = {
   currentPage: 1,
   pageSize: 24,
   currentModalIndex: -1,
-  theme: localStorage.getItem('raudat_theme') || 'light'
+  theme: localStorage.getItem('raudat_theme') || 'light',
+  font: localStorage.getItem('raudat_font') || 'Al-Fatemi'
 };
 
 // Topic presets for quick exploration
@@ -821,10 +822,22 @@ function selectTopic(idx) {
   renderApp();
 }
 
+// Font Switcher Handler
+function changeFont(fontName) {
+  state.font = fontName;
+  document.documentElement.style.setProperty('--font-arabic', `'${fontName}', 'Al-Fatemi', serif`);
+  document.documentElement.style.setProperty('--font-ld', `'${fontName}', 'Al-Fatemi', serif`);
+  localStorage.setItem('raudat_font', fontName);
+  const fontSelect = document.getElementById('fontSelect');
+  if (fontSelect) fontSelect.value = fontName;
+  showToast(`Font changed to ${fontName}`, '🔤');
+}
+
 // Init Setup & Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply initial theme
+  // Apply initial theme & font
   document.documentElement.setAttribute('data-theme', state.theme);
+  changeFont(state.font);
   updateThemeIcon();
   updateFavoritesCount();
 
