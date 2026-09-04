@@ -384,6 +384,14 @@ function renderApp() {
   renderPagination(totalPages);
 }
 
+// Toggle card translations drawer
+function toggleCardTranslations(btn) {
+  const wrapper = btn.closest('.card-translations-wrapper');
+  if (!wrapper) return;
+  const isExpanded = wrapper.classList.toggle('expanded');
+  btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+}
+
 // Render Single Kalam Card (Authentic Book Page Styling)
 function renderCard(item) {
   const isFav = state.favorites.has(item.id);
@@ -393,6 +401,13 @@ function renderCard(item) {
   const speakerHighlighted = highlightText(item.stated_by, state.query, true);
   const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by, item.id);
   const isMamlook = item.stated_by && item.stated_by.includes('مملوك');
+
+  // If search query matched inside ld_translation or english_translation, auto-expand
+  const hasMatchInTranslation = state.query && (
+    (item.ld_normalized && item.ld_normalized.includes(normalizeArabic(state.query))) ||
+    (item.english_normalized && item.english_normalized.includes(state.query.toLowerCase()))
+  );
+  const autoExpand = Boolean(hasMatchInTranslation || state.scope === 'ld' || state.scope === 'english');
 
   return `
     <div class="kalam-card" data-id="${item.id}">
@@ -421,15 +436,27 @@ function renderCard(item) {
         <div class="card-arabic-text">${arabicHighlighted}</div>
       </div>
 
-      <!-- Lisan al-Dawat Translation (Book Typesetting) -->
-      <div class="card-ld-content">
-        <div class="card-ld-text">${ldHighlighted}</div>
-      </div>
+      <!-- Collapsible Translations Section -->
+      <div class="card-translations-wrapper ${autoExpand ? 'expanded' : ''}">
+        <button class="card-translations-toggle" onclick="toggleCardTranslations(this)" aria-expanded="${autoExpand ? 'true' : 'false'}" title="الترجمة والشرح">
+          <span class="toggle-label-arabic">الترجمة والشرح</span>
+          <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
 
-      <!-- English Translation -->
-      <div class="card-en-content">
-        <div class="card-en-label">English Translation</div>
-        <div class="card-en-text">${enHighlighted}</div>
+        <div class="card-translations-drawer">
+          <!-- Lisan al-Dawat Translation (Book Typesetting) -->
+          <div class="card-ld-content">
+            <div class="card-ld-text">${ldHighlighted}</div>
+          </div>
+
+          <!-- English Translation -->
+          <div class="card-en-content">
+            <div class="card-en-label">English Translation</div>
+            <div class="card-en-text">${enHighlighted}</div>
+          </div>
+        </div>
       </div>
 
       <!-- Card Footer -->

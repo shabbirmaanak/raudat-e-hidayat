@@ -737,6 +737,79 @@ body {
   color: var(--text-primary);
 }
 
+/* Collapsible Translations Drawer in Cards */
+.card-translations-wrapper {
+  position: relative;
+  z-index: 2;
+  margin: 0.5rem 0;
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+}
+
+.card-translations-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--theme-gold-border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  color: var(--theme-lapis);
+  transition: all 0.2s ease;
+  font-family: var(--font-arabic) !important;
+}
+
+[data-theme="dark"] .card-translations-toggle {
+  color: var(--theme-gold);
+  border-color: var(--theme-gold-border);
+}
+
+.card-translations-toggle:hover {
+  background: var(--theme-gold-light);
+  border-color: var(--theme-gold);
+}
+
+.toggle-label-arabic {
+  font-size: 1.05rem;
+  font-weight: 700;
+  direction: rtl;
+  letter-spacing: 0.02em;
+}
+
+.toggle-icon {
+  transition: transform 0.25s ease;
+  color: var(--theme-gold-dark);
+}
+
+.card-translations-wrapper.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.card-translations-drawer {
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+  animation: fadeInDrawer 0.25s ease;
+}
+
+.card-translations-wrapper.expanded .card-translations-drawer {
+  display: flex;
+}
+
+@keyframes fadeInDrawer {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Card Footer */
 .card-footer-bar {
   margin-top: auto;
