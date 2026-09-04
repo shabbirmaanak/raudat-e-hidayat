@@ -1,5 +1,5 @@
 /**
- * Raudat al-Hidayat Full Dataset (600 records)
+ * Raudat-e-Hidayat Full Dataset (600 records)
  */
 const RAUDAT_DATA = [
   {

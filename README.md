@@ -1,6 +1,6 @@
-# Raudat al-Hidayat (روضة هدايات) Search Engine & Knowledge Base
+# Raudat-e-Hidayat (روضة هدايات) Search Engine & Knowledge Base
 
-An interactive, responsive full-text search engine and digital knowledge base for the complete collection of **Raudat al-Hidayat** (*روضة هدايات*), extracted directly from the Google Apps Script database.
+An interactive, responsive full-text search engine and digital knowledge base for the complete collection of **Raudat-e-Hidayat** (*روضة هدايات*), extracted directly from the Google Apps Script database.
 
 ---
 

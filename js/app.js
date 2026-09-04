@@ -350,7 +350,7 @@ function updateFavoritesCount() {
 function formatCitation(item) {
   const isMamlook = item.stated_by && item.stated_by.includes('مملوك');
   const speakerText = isMamlook ? `${item.stated_by}\n(سيدنا محمد برهان الدين رض)` : item.stated_by;
-  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${speakerText}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${capitalizeEnglishSentences(item.english_translation)}\n\n— _Raudat al-Hidayat_`;
+  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${speakerText}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${capitalizeEnglishSentences(item.english_translation)}\n\n— _Raudat-e-Hidayat_`;
 }
 
 // Render Results

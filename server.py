@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Raudat al-Hidayat Search Engine Server
+Raudat-e-Hidayat Search Engine Server
 Runs a local lightweight HTTP server and opens the app in your default browser.
 """
 
@@ -28,7 +28,7 @@ def run_server():
             with socketserver.TCPServer(("", port), handler) as httpd:
                 url = f"http://localhost:{port}/index.html"
                 print(f"=====================================================")
-                print(f"📖 Raudat al-Hidayat Search Engine is running!")
+                print(f"📖 Raudat-e-Hidayat Search Engine is running!")
                 print(f"🌐 Access URL: {url}")
                 print(f"⌨️  Press Ctrl+C to stop the server.")
                 print(f"=====================================================")
