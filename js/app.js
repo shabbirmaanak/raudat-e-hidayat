@@ -148,20 +148,16 @@ function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum
   const easternDigits = toEasternArabicDigits(serialNum);
   const categoryLabel = getCategoryLabel(statedBy);
   const fontSize = categoryLabel.length > 5 ? 11 : 13.5;
-  const idStr = String(uniqueId).replace(/\s+/g, '_');
 
   return `
     <div class="cartouche-badge-container" title="${escapeHtml(reference)} • #${serialNum} • ${escapeHtml(categoryLabel)}">
       <svg class="cartouche-svg" viewBox="0 0 100 135" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="goldGrad-${idStr}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#e2c482" />
             <stop offset="50%" stop-color="#c59f52" />
             <stop offset="100%" stop-color="#ab8232" />
           </linearGradient>
-          <filter id="badgeShadow-${idStr}" x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.18" />
-          </filter>
         </defs>
         
         <!-- Outer Lapis Crest -->
@@ -174,7 +170,7 @@ function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum
                  C10 94, 24 82, 18 72 
                  C12 62, 4 46, 14 32 
                  C24 18, 44 16, 50 4 Z" 
-              fill="#1e355b" filter="url(#badgeShadow-${idStr})"/>
+              fill="#1e355b"/>
               
         <!-- Inner Gold Parchment Field -->
         <path d="M50 8 
@@ -186,7 +182,7 @@ function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum
                  C15 90, 27 79, 21 69 
                  C16 60, 9 46, 18 34 
                  C27 21, 45 19, 50 8 Z" 
-              fill="url(#goldGrad-${idStr})" stroke="#1a2d4f" stroke-width="1.2"/>
+              fill="url(#goldGrad)" stroke="#1a2d4f" stroke-width="1.2"/>
               
         <!-- Inner Filigree Line -->
         <path d="M50 12 
