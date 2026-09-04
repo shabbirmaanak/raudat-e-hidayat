@@ -887,20 +887,16 @@ function updateThemeIcon() {
 function changeFont(fontName) {
   state.font = fontName;
   document.documentElement.style.setProperty('--font-arabic', `'${fontName}', serif`);
-  document.documentElement.style.setProperty('--font-ld', `'${fontName}', serif`);
   localStorage.setItem('raudat_font', fontName);
   const fontSelect = document.getElementById('fontSelect');
   if (fontSelect && fontSelect.value !== fontName) fontSelect.value = fontName;
 
-  // Force direct styling on cards and active elements
-  document.querySelectorAll('.card-arabic-text, .card-speaker-name, .card-volume-ref, .hero-title-arabic, .brand-text h1, .topic-pill, .vol-tab').forEach(el => {
-    el.style.fontFamily = `'${fontName}', serif`;
-  });
-  document.querySelectorAll('.card-ld-text').forEach(el => {
+  // Force direct styling only on UI / header elements, leaving Arabic (Amiri), LD (Kanz-al-Lulu), and English (Amiri) locked
+  document.querySelectorAll('.card-speaker-name, .card-volume-ref, .hero-title-arabic, .brand-text h1, .topic-pill, .vol-tab').forEach(el => {
     el.style.fontFamily = `'${fontName}', serif`;
   });
 
-  showToast(`Font: ${fontName}`, '🔤');
+  showToast(`UI Font: ${fontName}`, '🔤');
 }
 
 // Populate Speaker Select options

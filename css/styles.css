@@ -666,7 +666,7 @@ body {
   color: var(--theme-crimson);
 }
 
-/* Arabic Kalam Section (Book Calligraphy Style) */
+/* Arabic Kalam Section (Book Calligraphy Style - Locked to Amiri) */
 .card-arabic-content {
   direction: rtl;
   text-align: center;
@@ -676,7 +676,7 @@ body {
 }
 
 .card-arabic-text {
-  font-family: var(--font-arabic);
+  font-family: 'Amiri', serif !important;
   font-size: 1.85rem;
   line-height: 2.1;
   color: var(--text-primary);
@@ -685,7 +685,7 @@ body {
   text-shadow: 0 0 1px rgba(0,0,0,0.05);
 }
 
-/* Lisan al-Dawat Section (Book Typesetting) */
+/* Lisan al-Dawat Section (Book Typesetting - Locked to Kanz-al-Lulu) */
 .card-ld-content {
   direction: rtl;
   text-align: center;
@@ -698,13 +698,13 @@ body {
 }
 
 .card-ld-text {
-  font-family: var(--font-ld);
+  font-family: 'Kanz-al-Lulu', serif !important;
   font-size: 1.25rem;
   line-height: 1.9;
   color: var(--text-secondary);
 }
 
-/* English Translation Section */
+/* English Translation Section (Locked to Amiri) */
 .card-en-content {
   direction: ltr;
   text-align: left;
@@ -731,7 +731,8 @@ body {
 }
 
 .card-en-text {
-  font-size: 0.92rem;
+  font-family: 'Amiri', serif !important;
+  font-size: 1.05rem;
   line-height: 1.6;
   color: var(--text-primary);
 }
@@ -803,7 +804,7 @@ body {
 }
 
 .td-arabic {
-  font-family: var(--font-arabic);
+  font-family: 'Amiri', serif !important;
   font-size: 1.45rem;
   direction: rtl;
   text-align: right;
@@ -812,7 +813,7 @@ body {
 }
 
 .td-ld {
-  font-family: var(--font-ld);
+  font-family: 'Kanz-al-Lulu', serif !important;
   font-size: 1.15rem;
   direction: rtl;
   text-align: right;
@@ -822,8 +823,10 @@ body {
 }
 
 .td-en {
+  font-family: 'Amiri', serif !important;
   min-width: 220px;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
 }
 
 /* Highlighted Search Terms */
