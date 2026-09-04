@@ -1,7 +1,7 @@
 /**
  * Raudat al-Hidayat Search Engine
- * High-performance full-text search with Arabic normalization,
- * Lisan al-Dawat filtering, English translations, favorites, and analytics.
+ * High-performance full-text search with authentic book theme,
+ * Arabic normalization, Lisan al-Dawat filtering, and Dawat calligraphy fonts.
  */
 
 // Global State
@@ -39,22 +39,22 @@ const TOPIC_PRESETS = [
   { label: 'Parents / Family (والدين)', query: 'والد' }
 ];
 
+// Eastern Arabic digits converter (e.g. 6 -> ٦, 42 -> ٤٢)
+function toEasternArabicDigits(num) {
+  if (num === null || num === undefined) return '';
+  const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return num.toString().replace(/\d/g, d => arabicDigits[d]);
+}
+
 // Arabic Normalizer for search
 function normalizeArabic(text) {
   if (!text) return '';
-  // Remove diacritics/tashkeel
   let res = text.replace(/[\u0617-\u061A\u064B-\u0652\u0670\u06D6-\u06ED]/g, '');
-  // Normalize Alef
   res = res.replace(/[إأآٱا]/g, 'ا');
-  // Normalize Yaa
   res = res.replace(/[يى]/g, 'ي');
-  // Normalize Taa Marbuta
   res = res.replace(/ة/g, 'ه');
-  // Normalize Hamza
   res = res.replace(/[ؤئ]/g, 'ء');
-  // Remove tatweel (kashida)
   res = res.replace(/ـ/g, '');
-  // Clean punctuation and spaces
   res = res.replace(/\s+/g, ' ').trim().toLowerCase();
   return res;
 }
@@ -91,7 +91,6 @@ function highlightText(text, query, isArabic = false) {
   if (!qClean) return escapeHtml(text);
 
   if (!isArabic) {
-    // English / standard regex
     try {
       const words = qClean.split(/\s+/).filter(Boolean);
       let pattern = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
@@ -102,13 +101,11 @@ function highlightText(text, query, isArabic = false) {
     }
   }
 
-  // Arabic highlight with diacritic matching
   try {
     const qNorm = normalizeArabic(qClean);
     const words = qNorm.split(/\s+/).filter(Boolean);
     if (!words.length) return escapeHtml(text);
 
-    // Build flexible Arabic regex allowing optional diacritics between letters
     const diacritics = '[\\u0617-\\u061A\\u064B-\\u0652\\u0670\\u06D6-\\u06EDـ]*';
     const patterns = words.map(w => {
       return w.split('').map(char => {
@@ -125,6 +122,78 @@ function highlightText(text, query, isArabic = false) {
   } catch (e) {
     return escapeHtml(text);
   }
+}
+
+// Generate the authentic Golden Cartouche SVG Medallion from the book
+function renderCartoucheSVG(serialNum, reference, statedBy) {
+  const easternDigits = toEasternArabicDigits(serialNum);
+  const isHadith = (reference && reference.includes('1')) || (statedBy && statedBy.includes('رسول الله'));
+  const categoryLabel = isHadith ? 'الحديث' : 'الكلام';
+
+  return `
+    <div class="cartouche-badge-container" title="${escapeHtml(reference)} • #${serialNum}">
+      <svg class="cartouche-svg" viewBox="0 0 100 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldGrad-${serialNum}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e2c482" />
+            <stop offset="50%" stop-color="#c59f52" />
+            <stop offset="100%" stop-color="#ab8232" />
+          </linearGradient>
+          <filter id="badgeShadow-${serialNum}" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.18" />
+          </filter>
+        </defs>
+        
+        <!-- Outer Lapis Crest -->
+        <path d="M50 4 
+                 C56 16, 76 18, 86 32 
+                 C96 46, 88 62, 82 72 
+                 C76 82, 90 94, 85 106 
+                 C80 118, 58 126, 50 131 
+                 C42 126, 20 118, 15 106 
+                 C10 94, 24 82, 18 72 
+                 C12 62, 4 46, 14 32 
+                 C24 18, 44 16, 50 4 Z" 
+              fill="#1e355b" filter="url(#badgeShadow-${serialNum})"/>
+              
+        <!-- Inner Gold Parchment Field -->
+        <path d="M50 8 
+                 C55 19, 73 21, 82 34 
+                 C91 46, 84 60, 79 69 
+                 C73 79, 85 90, 81 101 
+                 C76 112, 57 119, 50 124 
+                 C43 119, 24 112, 19 101 
+                 C15 90, 27 79, 21 69 
+                 C16 60, 9 46, 18 34 
+                 C27 21, 45 19, 50 8 Z" 
+              fill="url(#goldGrad-${serialNum})" stroke="#1a2d4f" stroke-width="1.2"/>
+              
+        <!-- Inner Filigree Line -->
+        <path d="M50 12 
+                 C54 21, 70 23, 78 35 
+                 C86 46, 80 58, 75 67 
+                 C70 76, 81 86, 77 96 
+                 C72 106, 55 112, 50 117 
+                 C45 112, 28 106, 23 96 
+                 C19 86, 30 76, 25 67 
+                 C20 58, 14 46, 22 35 
+                 C30 23, 46 21, 50 12 Z" 
+              fill="none" stroke="#8d6820" stroke-width="0.7" stroke-dasharray="1.5 1"/>
+              
+        <!-- Top Rosette Diamond -->
+        <g transform="translate(50, 26)">
+          <polygon points="0,-8 5,0 0,8 -5,0" fill="#9e1e1e" stroke="#1a2d4f" stroke-width="0.8" />
+          <circle cx="0" cy="0" r="1.5" fill="#f3d48c" />
+        </g>
+        
+        <!-- Eastern Arabic Number -->
+        <text x="50" y="68" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="29" font-weight="bold" fill="#1b2a47">${easternDigits}</text>
+        
+        <!-- Category Label -->
+        <text x="50" y="95" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="14" font-weight="bold" fill="#9e1e1e">${categoryLabel}</text>
+      </svg>
+    </div>
+  `;
 }
 
 // Filter and Rank dataset
@@ -165,12 +234,10 @@ function getFilteredData() {
       if (state.scope === 'english') return matchEn;
       if (state.scope === 'stated_by') return matchSpeaker;
 
-      // 'all' scope: match any field or all words across fields
       if (matchArabic || matchLD || matchEn || matchSpeaker || matchSerial) {
         return true;
       }
 
-      // Check multi-word matching across fields
       const allWordsMatch = queryWords.every(word => {
         const wAr = normalizeArabic(word);
         const wEn = word.toLowerCase();
@@ -198,7 +265,7 @@ function showToast(message, icon = '✓') {
   const container = document.getElementById('toastContainer') || createToastContainer();
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.innerHTML = `<span style="color:var(--primary);font-weight:bold;">${icon}</span> <span>${message}</span>`;
+  toast.innerHTML = `<span style="color:var(--theme-gold);font-weight:bold;">${icon}</span> <span>${message}</span>`;
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
@@ -221,7 +288,6 @@ function copyToClipboard(text, msg = 'Copied to clipboard!') {
   navigator.clipboard.writeText(text).then(() => {
     showToast(msg);
   }).catch(() => {
-    // Fallback
     const el = document.createElement('textarea');
     el.value = text;
     document.body.appendChild(el);
@@ -255,7 +321,7 @@ function updateFavoritesCount() {
 
 // Format Citation for Sharing
 function formatCitation(item) {
-  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${item.stated_by}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${item.english_translation}\n\n— _Raudat al-Hidayat Search_`;
+  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${item.stated_by}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${item.english_translation}\n\n— _Raudat al-Hidayat_`;
 }
 
 // Render Results
@@ -268,16 +334,13 @@ function renderApp() {
   const start = (state.currentPage - 1) * state.pageSize;
   const pageItems = filtered.slice(start, start + state.pageSize);
 
-  // Update Result Counts
   const resultsCountEl = document.getElementById('resultsCount');
   if (resultsCountEl) {
     resultsCountEl.innerHTML = `Showing <strong>${total === 0 ? 0 : start + 1}-${Math.min(start + pageItems.length, total)}</strong> of <strong>${total}</strong> Kalam${total !== state.data.length ? ` (filtered from ${state.data.length})` : ''}`;
   }
 
-  // Update Active Filter Chips
   renderFilterChips();
 
-  // Render Content based on viewMode
   const container = document.getElementById('resultsContainer');
   if (!container) return;
 
@@ -285,9 +348,9 @@ function renderApp() {
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">🔍</div>
-        <h3 style="margin-bottom:0.5rem;font-size:1.25rem;">No matching Kalam found</h3>
-        <p style="color:var(--text-secondary);margin-bottom:1.5rem;">Try adjusting your search keywords, volume filters, or search scope.</p>
-        <button class="btn btn-primary" onclick="resetFilters()">Reset All Filters</button>
+        <h3 style="margin-bottom:0.5rem;font-size:1.3rem;font-family:var(--font-arabic);">كوئي كلام نتھي ملو</h3>
+        <p style="color:var(--text-secondary);margin-bottom:1.5rem;">No matching Kalam found. Try adjusting your search query, volume tabs, or scope.</p>
+        <button class="btn btn-gold" onclick="resetFilters()">Reset All Filters</button>
       </div>
     `;
     document.getElementById('paginationBar').innerHTML = '';
@@ -300,57 +363,64 @@ function renderApp() {
     container.innerHTML = renderTable(pageItems);
   }
 
-  // Render Pagination
   renderPagination(totalPages);
 }
 
-// Render Single Kalam Card
+// Render Single Kalam Card (Authentic Book Page Styling)
 function renderCard(item) {
   const isFav = state.favorites.has(item.id);
   const arabicHighlighted = highlightText(item.arabic, state.query, true);
   const ldHighlighted = highlightText(item.ld_translation, state.query, true);
   const enHighlighted = highlightText(item.english_translation, state.query, false);
   const speakerHighlighted = highlightText(item.stated_by, state.query, true);
+  const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by);
 
   return `
     <div class="kalam-card" data-id="${item.id}">
-      <div class="card-header">
-        <div class="card-meta-left">
-          <span class="card-vol-badge">${escapeHtml(item.reference)} • Kalam #${item.serial_num}</span>
-          <span class="card-speaker-badge">${speakerHighlighted}</span>
+      <!-- Top Bar: Speaker & Golden Cartouche -->
+      <div class="card-top-bar">
+        <div class="card-speaker-block">
+          <span class="card-speaker-name">${speakerHighlighted}</span>
+          <span class="card-volume-ref">${escapeHtml(item.reference)}</span>
         </div>
-        <div class="card-actions-quick">
-          <button class="icon-btn-sm ${isFav ? 'active-fav' : ''}" title="${isFav ? 'Remove Bookmark' : 'Bookmark Kalam'}" onclick="toggleFavorite(${item.id})">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-          </button>
-          <button class="icon-btn-sm" title="Share / Copy Citation" onclick="copyCitation(${item.id})">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-          </button>
+        <div class="card-top-right">
+          ${cartoucheBadge}
+          <div class="card-quick-actions">
+            <button class="icon-btn-sm ${isFav ? 'active-fav' : ''}" title="${isFav ? 'Remove Bookmark' : 'Bookmark Kalam'}" onclick="toggleFavorite(${item.id})">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            </button>
+            <button class="icon-btn-sm" title="Share Citation" onclick="copyCitation(${item.id})">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="card-arabic-box">
+      <!-- Central Arabic Kalam (Book Calligraphy) -->
+      <div class="card-arabic-content">
         <div class="card-arabic-text">${arabicHighlighted}</div>
       </div>
 
-      <div class="card-ld-box">
-        <div class="card-ld-label">Lisan al-Dawat</div>
+      <!-- Lisan al-Dawat Translation (Book Typesetting) -->
+      <div class="card-ld-content">
         <div class="card-ld-text">${ldHighlighted}</div>
       </div>
 
-      <div class="card-en-box">
+      <!-- English Translation -->
+      <div class="card-en-content">
         <div class="card-en-label">English Translation</div>
         <div class="card-en-text">${enHighlighted}</div>
       </div>
 
-      <div class="card-footer">
-        <span class="card-id-num">ID: #${item.id}</span>
-        <div class="card-bottom-actions">
+      <!-- Card Footer -->
+      <div class="card-footer-bar">
+        <span class="card-id-badge">ID: #${item.id}</span>
+        <div class="card-action-buttons">
           <button class="btn btn-icon" title="Copy Arabic" onclick="copyArabicText(${item.id})">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <span style="font-size:0.75rem;">Arabic</span>
           </button>
-          <button class="btn btn-icon" title="View Full Details" onclick="openDetailModal(${item.id})">
+          <button class="btn btn-icon" title="View Full Page Details" onclick="openDetailModal(${item.id})">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
             <span style="font-size:0.75rem;">Detail</span>
           </button>
@@ -381,9 +451,9 @@ function renderTable(items) {
             const isFav = state.favorites.has(item.id);
             return `
               <tr>
-                <td><strong>${item.serial_num}</strong></td>
+                <td><strong>${toEasternArabicDigits(item.serial_num)} (${item.serial_num})</strong></td>
                 <td><span class="badge badge-gold">${escapeHtml(item.reference)}</span></td>
-                <td class="td-arabic" style="font-size:1rem;color:var(--text-secondary);">${escapeHtml(item.stated_by)}</td>
+                <td class="td-arabic" style="font-size:1.15rem;color:var(--theme-lapis);">${escapeHtml(item.stated_by)}</td>
                 <td class="td-arabic">${highlightText(item.arabic, state.query, true)}</td>
                 <td class="td-ld">${highlightText(item.ld_translation, state.query, true)}</td>
                 <td class="td-en">${highlightText(item.english_translation, state.query, false)}</td>
@@ -564,7 +634,7 @@ function resetFilters() {
   showToast('Filters cleared', '↺');
 }
 
-// Modal Detail View
+// Modal Detail View (Full Page Replica)
 function openDetailModal(id) {
   const index = state.data.findIndex(d => d.id === id);
   if (index === -1) return;
@@ -586,12 +656,13 @@ function renderModalContent() {
   const isFav = state.favorites.has(item.id);
   const container = document.getElementById('detailModalContainer');
   if (!container) return;
+  const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by);
 
   container.innerHTML = `
     <div class="modal-header">
-      <div>
-        <span class="badge badge-gold" style="margin-right:0.5rem;">${escapeHtml(item.reference)}</span>
-        <span class="badge badge-primary">Kalam #${item.serial_num}</span>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span class="badge badge-gold">${escapeHtml(item.reference)}</span>
+        <span class="badge badge-lapis">Kalam #${item.serial_num}</span>
       </div>
       <div style="display:flex;gap:0.5rem;align-items:center;">
         <button class="icon-btn-sm ${isFav ? 'active-fav' : ''}" onclick="toggleFavorite(${item.id})" title="Bookmark">
@@ -602,31 +673,37 @@ function renderModalContent() {
         </button>
       </div>
     </div>
+    
     <div class="modal-body">
-      <div style="text-align:right;direction:rtl;font-size:1.1rem;font-weight:700;color:var(--text-secondary);font-family:var(--font-arabic);">
-        ${escapeHtml(item.stated_by)}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <div style="text-align:right;direction:rtl;font-size:1.4rem;font-weight:700;color:var(--theme-lapis);font-family:var(--font-arabic);">
+          ${escapeHtml(item.stated_by)}
+        </div>
+        <div>
+          ${cartoucheBadge}
+        </div>
       </div>
 
-      <div class="card-arabic-box" style="padding:1rem 0;">
-        <div class="card-arabic-text" style="font-size:1.9rem;line-height:2;">
+      <div class="card-arabic-content" style="padding:1.5rem 0.5rem;">
+        <div class="card-arabic-text" style="font-size:2.3rem;line-height:2.2;">
           ${escapeHtml(item.arabic)}
         </div>
       </div>
 
-      <div class="card-ld-box">
-        <div class="card-ld-label">Lisan al-Dawat Translation</div>
-        <div class="card-ld-text" style="font-size:1.25rem;">
+      <div class="card-ld-content" style="padding:1.25rem 1.5rem;">
+        <div class="card-ld-text" style="font-size:1.45rem;">
           ${escapeHtml(item.ld_translation)}
         </div>
       </div>
 
-      <div class="card-en-box">
+      <div class="card-en-content" style="padding:1.1rem 1.35rem;">
         <div class="card-en-label">English Translation</div>
         <div class="card-en-text" style="font-size:1.05rem;">
           ${escapeHtml(item.english_translation)}
         </div>
       </div>
     </div>
+
     <div class="modal-footer">
       <div style="display:flex;gap:0.5rem;">
         <button class="btn btn-icon" onclick="navigateModal(-1)" ${state.currentModalIndex === 0 ? 'disabled' : ''}>← Previous</button>
@@ -634,7 +711,7 @@ function renderModalContent() {
       </div>
       <div style="display:flex;gap:0.5rem;">
         <button class="btn btn-icon" onclick="copyArabicText(${item.id})">Copy Arabic</button>
-        <button class="btn btn-primary" onclick="copyCitation(${item.id})">Share / Citation</button>
+        <button class="btn btn-gold" onclick="copyCitation(${item.id})">Share Citation</button>
       </div>
     </div>
   `;
@@ -695,22 +772,22 @@ function openStatsModal() {
       </div>
     </div>
 
-    <h4 style="margin-bottom:0.75rem;font-size:1rem;">Distribution by Volume</h4>
+    <h4 style="margin-bottom:0.75rem;font-size:1rem;color:var(--theme-lapis);">Distribution by Volume</h4>
     <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
       ${Object.entries(volCounts).map(([vol, count]) => `
-        <div style="flex:1;min-width:140px;background:var(--bg-elevated);padding:0.75rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border-color);">
-          <div style="font-weight:700;color:var(--accent-gold-dark);">${escapeHtml(vol)}</div>
-          <div style="font-size:1.25rem;font-weight:800;color:var(--text-primary);">${count} Kalam</div>
+        <div style="flex:1;min-width:140px;background:var(--bg-elevated);padding:0.75rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--theme-gold-border);">
+          <div style="font-weight:700;color:var(--theme-gold-dark);font-family:var(--font-arabic);">${escapeHtml(vol)}</div>
+          <div style="font-size:1.25rem;font-weight:800;color:var(--theme-lapis);">${count} Kalam</div>
         </div>
       `).join('')}
     </div>
 
-    <h4 style="margin-bottom:0.75rem;font-size:1rem;">Top Speakers & Personalities</h4>
+    <h4 style="margin-bottom:0.75rem;font-size:1rem;color:var(--theme-lapis);">Top Speakers & Authors</h4>
     <div style="max-height:220px;overflow-y:auto;background:var(--bg-elevated);border-radius:var(--radius-sm);padding:0.75rem 1rem;border:1px solid var(--border-color);">
       ${sortedSpeakers.map(([sp, cnt]) => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid var(--border-color);">
-          <span style="font-family:var(--font-arabic);direction:rtl;">${escapeHtml(sp)}</span>
-          <span class="badge badge-primary">${cnt}</span>
+          <span style="font-family:var(--font-arabic);direction:rtl;color:var(--text-primary);font-size:1rem;">${escapeHtml(sp)}</span>
+          <span class="badge badge-gold">${cnt}</span>
         </div>
       `).join('')}
     </div>
@@ -776,6 +853,17 @@ function updateThemeIcon() {
   }
 }
 
+// Font Switcher Handler
+function changeFont(fontName) {
+  state.font = fontName;
+  document.documentElement.style.setProperty('--font-arabic', `'${fontName}', 'Al-Fatemi', serif`);
+  document.documentElement.style.setProperty('--font-ld', `'${fontName}', 'Al-Fatemi', serif`);
+  localStorage.setItem('raudat_font', fontName);
+  const fontSelect = document.getElementById('fontSelect');
+  if (fontSelect) fontSelect.value = fontName;
+  showToast(`Font changed to ${fontName}`, '🔤');
+}
+
 // Populate Speaker Select options
 function populateSpeakers() {
   const select = document.getElementById('speakerSelect');
@@ -805,7 +893,6 @@ function selectTopic(idx) {
   const topic = TOPIC_PRESETS[idx];
   const pills = document.querySelectorAll('.topic-pill');
   if (state.selectedTopic === idx) {
-    // deselect
     state.selectedTopic = null;
     state.query = '';
     document.getElementById('searchInput').value = '';
@@ -822,30 +909,16 @@ function selectTopic(idx) {
   renderApp();
 }
 
-// Font Switcher Handler
-function changeFont(fontName) {
-  state.font = fontName;
-  document.documentElement.style.setProperty('--font-arabic', `'${fontName}', 'Al-Fatemi', serif`);
-  document.documentElement.style.setProperty('--font-ld', `'${fontName}', 'Al-Fatemi', serif`);
-  localStorage.setItem('raudat_font', fontName);
-  const fontSelect = document.getElementById('fontSelect');
-  if (fontSelect) fontSelect.value = fontName;
-  showToast(`Font changed to ${fontName}`, '🔤');
-}
-
 // Init Setup & Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply initial theme & font
   document.documentElement.setAttribute('data-theme', state.theme);
   changeFont(state.font);
   updateThemeIcon();
   updateFavoritesCount();
 
-  // Populate UI
   populateSpeakers();
   populateTopics();
 
-  // Search Input Debounce
   const searchInput = document.getElementById('searchInput');
   const searchClearBtn = document.getElementById('searchClearBtn');
   let debounceTimeout = null;
@@ -889,7 +962,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Modal Backdrop Click to close
   document.getElementById('detailModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'detailModal') closeDetailModal();
   });
@@ -897,6 +969,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'statsModal') closeStatsModal();
   });
 
-  // Initial Render
   renderApp();
 });

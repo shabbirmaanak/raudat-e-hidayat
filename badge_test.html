@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { background: #f4f1ea; padding: 40px; display: flex; gap: 40px; align-items: center; justify-content: center; }
+    .preview-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <div class="preview-box">
+    <h4>Cropped Original Badge:</h4>
+    <img src="assets/cartouche_badge.png" width="90">
+  </div>
+  <div class="preview-box">
+    <h4>Vector SVG Badge:</h4>
+    <svg width="90" height="120" viewBox="0 0 100 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ddbe78" />
+          <stop offset="50%" stop-color="#c59f52" />
+          <stop offset="100%" stop-color="#af8737" />
+        </linearGradient>
+        <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15" />
+        </filter>
+      </defs>
+      
+      <!-- Outer Lapis Border -->
+      <path d="M50 4 
+               C56 16, 76 18, 86 32 
+               C96 46, 88 62, 82 72 
+               C76 82, 90 94, 85 106 
+               C80 118, 58 126, 50 131 
+               C42 126, 20 118, 15 106 
+               C10 94, 24 82, 18 72 
+               C12 62, 4 46, 14 32 
+               C24 18, 44 16, 50 4 Z" 
+            fill="#223961" filter="url(#badgeShadow)"/>
+            
+      <!-- Inner Gold Parchment Field -->
+      <path d="M50 8 
+               C55 19, 73 21, 82 34 
+               C91 46, 84 60, 79 69 
+               C73 79, 85 90, 81 101 
+               C76 112, 57 119, 50 124 
+               C43 119, 24 112, 19 101 
+               C15 90, 27 79, 21 69 
+               C16 60, 9 46, 18 34 
+               C27 21, 45 19, 50 8 Z" 
+            fill="url(#goldGrad)" stroke="#1a2d4f" stroke-width="1.2"/>
+            
+      <!-- Inner Fine Filigree Ring -->
+      <path d="M50 12 
+               C54 21, 70 23, 78 35 
+               C86 46, 80 58, 75 67 
+               C70 76, 81 86, 77 96 
+               C72 106, 55 112, 50 117 
+               C45 112, 28 106, 23 96 
+               C19 86, 30 76, 25 67 
+               C20 58, 14 46, 22 35 
+               C30 23, 46 21, 50 12 Z" 
+            fill="none" stroke="#8d6820" stroke-width="0.7" stroke-dasharray="1.5 1"/>
+            
+      <!-- Top Rosette Diamond -->
+      <g transform="translate(50, 26)">
+        <polygon points="0,-8 5,0 0,8 -5,0" fill="#9e1e1e" stroke="#1a2d4f" stroke-width="0.8" />
+        <circle cx="0" cy="0" r="1.5" fill="#f3d48c" />
+        <circle cx="0" cy="-4" r="0.8" fill="#f3d48c" />
+        <circle cx="0" cy="4" r="0.8" fill="#f3d48c" />
+      </g>
+      
+      <!-- Number -->
+      <text x="50" y="68" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="30" font-weight="bold" fill="#1b2a47">٦</text>
+      
+      <!-- Label -->
+      <text x="50" y="94" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="14" font-weight="bold" fill="#9e1e1e">الحديث</text>
+    </svg>
+  </div>
+</body>
+</html>
