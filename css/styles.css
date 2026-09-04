@@ -346,9 +346,9 @@ body {
   background: var(--bg-surface);
   border: 1px solid var(--theme-gold-border);
   color: var(--text-secondary);
-  padding: 0.35rem 0.85rem;
+  padding: 0.35rem 1rem;
   border-radius: var(--radius-full);
-  font-size: 0.825rem;
+  font-size: 1.05rem;
   font-family: var(--font-arabic);
   cursor: pointer;
   transition: all 0.15s ease;

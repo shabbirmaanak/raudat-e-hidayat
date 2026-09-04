@@ -23,20 +23,20 @@ const state = {
   font: localStorage.getItem('raudat_font') || 'Al-Fatemi'
 };
 
-// Topic presets for quick exploration
+// Topic presets for quick exploration (Pure Arabic)
 const TOPIC_PRESETS = [
-  { label: 'Taqwa (تقوى)', query: 'تقو' },
-  { label: 'Ilm / Knowledge (علم)', query: 'علم' },
-  { label: 'Brotherhood / Mumin (اخوة)', query: 'اخ' },
-  { label: 'Husn al-Khuluq (حسن الخلق)', query: 'خلق' },
-  { label: 'Sadaqah / Charity (صدقة)', query: 'صدق' },
-  { label: 'Sabr / Patience (صبر)', query: 'صبر' },
-  { label: 'Dua (دعاء)', query: 'دع' },
-  { label: 'Imaan / Faith (ايمان)', query: 'ايمان' },
-  { label: 'Niyyat / Sincerity (نية)', query: 'ني' },
-  { label: 'Halal Rizq (رزق)', query: 'رزق' },
-  { label: 'Tawbah / Forgiveness (توبة)', query: 'توب' },
-  { label: 'Parents / Family (والدين)', query: 'والد' }
+  { label: 'تقوى', query: 'تقو' },
+  { label: 'علم', query: 'علم' },
+  { label: 'اخوة', query: 'اخ' },
+  { label: 'حسن الخلق', query: 'خلق' },
+  { label: 'صدقة', query: 'صدق' },
+  { label: 'صبر', query: 'صبر' },
+  { label: 'دعاء', query: 'دع' },
+  { label: 'ايمان', query: 'ايمان' },
+  { label: 'نية', query: 'ني' },
+  { label: 'رزق', query: 'رزق' },
+  { label: 'توبة', query: 'توب' },
+  { label: 'والدين', query: 'والد' }
 ];
 
 // Eastern Arabic digits converter (e.g. 6 -> ٦, 42 -> ٤٢)
