@@ -124,15 +124,34 @@ function highlightText(text, query, isArabic = false) {
   }
 }
 
+// Determine the authentic category classification for the medallion badge:
+// 1. Any phrase said by رسول الله is حديث (الحديث)
+// 2. Any phrase said by علي is كلام (الكلام)
+// 3. Any phrase said by مملوك اْل محمد الطاهرين ص ع is مما قاله
+// 4. Any phrase said by the rest of the speakers is قول (القول)
+function getCategoryLabel(statedBy) {
+  if (!statedBy) return 'الكلام';
+  if (statedBy.includes('رسول الله')) {
+    return 'الحديث';
+  }
+  if (statedBy.includes('علي ابن ابي طالب') || statedBy.includes('علي بن ابي طالب')) {
+    return 'الكلام';
+  }
+  if (statedBy.includes('مملوك')) {
+    return 'مما قاله';
+  }
+  return 'القول';
+}
+
 // Generate the authentic Golden Cartouche SVG Medallion from the book
 function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum) {
   const easternDigits = toEasternArabicDigits(serialNum);
-  const isHadith = (reference && reference.includes('1')) || (statedBy && (statedBy.includes('رسول الله') || statedBy.includes('صلع')));
-  const categoryLabel = isHadith ? 'الحديث' : 'الكلام';
+  const categoryLabel = getCategoryLabel(statedBy);
+  const fontSize = categoryLabel.length > 5 ? 11 : 13.5;
   const idStr = String(uniqueId).replace(/\s+/g, '_');
 
   return `
-    <div class="cartouche-badge-container" title="${escapeHtml(reference)} • #${serialNum}">
+    <div class="cartouche-badge-container" title="${escapeHtml(reference)} • #${serialNum} • ${escapeHtml(categoryLabel)}">
       <svg class="cartouche-svg" viewBox="0 0 100 135" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="goldGrad-${idStr}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -191,7 +210,7 @@ function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum
         <text x="50" y="68" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="29" font-weight="bold" fill="#1b2a47">${easternDigits}</text>
         
         <!-- Category Label -->
-        <text x="50" y="95" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="14" font-weight="bold" fill="#9e1e1e">${categoryLabel}</text>
+        <text x="50" y="95" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="${fontSize}" font-weight="bold" fill="#9e1e1e">${categoryLabel}</text>
       </svg>
     </div>
   `;
@@ -322,7 +341,9 @@ function updateFavoritesCount() {
 
 // Format Citation for Sharing
 function formatCitation(item) {
-  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${item.stated_by}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${item.english_translation}\n\n— _Raudat al-Hidayat_`;
+  const isMamlook = item.stated_by && item.stated_by.includes('مملوك');
+  const speakerText = isMamlook ? `${item.stated_by}\n(سيدنا محمد برهان الدين رض)` : item.stated_by;
+  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${speakerText}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${item.english_translation}\n\n— _Raudat al-Hidayat_`;
 }
 
 // Render Results
@@ -375,6 +396,7 @@ function renderCard(item) {
   const enHighlighted = highlightText(item.english_translation, state.query, false);
   const speakerHighlighted = highlightText(item.stated_by, state.query, true);
   const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by, item.id);
+  const isMamlook = item.stated_by && item.stated_by.includes('مملوك');
 
   return `
     <div class="kalam-card" data-id="${item.id}">
@@ -382,6 +404,7 @@ function renderCard(item) {
       <div class="card-top-bar">
         <div class="card-speaker-block">
           <span class="card-speaker-name">${speakerHighlighted}</span>
+          ${isMamlook ? `<span class="card-sub-speaker">سيدنا محمد برهان الدين رض</span>` : ''}
           <span class="card-volume-ref">${escapeHtml(item.reference)}</span>
         </div>
         <div class="card-top-right">
@@ -454,7 +477,10 @@ function renderTable(items) {
               <tr>
                 <td><strong>${toEasternArabicDigits(item.serial_num)} (${item.serial_num})</strong></td>
                 <td><span class="badge badge-gold">${escapeHtml(item.reference)}</span></td>
-                <td class="td-arabic" style="font-size:1.15rem;color:var(--theme-lapis);">${escapeHtml(item.stated_by)}</td>
+                <td class="td-arabic" style="font-size:1.15rem;color:var(--theme-lapis);">
+                  ${escapeHtml(item.stated_by)}
+                  ${item.stated_by && item.stated_by.includes('مملوك') ? `<div style="font-size:0.9rem;color:var(--theme-gold-dark);font-weight:600;margin-top:0.2rem;">سيدنا محمد برهان الدين رض</div>` : ''}
+                </td>
                 <td class="td-arabic">${highlightText(item.arabic, state.query, true)}</td>
                 <td class="td-ld">${highlightText(item.ld_translation, state.query, true)}</td>
                 <td class="td-en">${highlightText(item.english_translation, state.query, false)}</td>
@@ -677,8 +703,11 @@ function renderModalContent() {
     
     <div class="modal-body">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-        <div style="text-align:right;direction:rtl;font-size:1.4rem;font-weight:700;color:var(--theme-lapis);font-family:var(--font-arabic);">
-          ${escapeHtml(item.stated_by)}
+        <div style="text-align:right;direction:rtl;font-family:var(--font-arabic);">
+          <div style="font-size:1.4rem;font-weight:700;color:var(--theme-lapis);">
+            ${escapeHtml(item.stated_by)}
+          </div>
+          ${item.stated_by && item.stated_by.includes('مملوك') ? `<div style="font-size:1.05rem;font-weight:600;color:var(--theme-gold-dark);margin-top:0.25rem;">سيدنا محمد برهان الدين رض</div>` : ''}
         </div>
         <div>
           ${cartoucheBadge}
