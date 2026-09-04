@@ -1,51 +1,99 @@
 /* ==========================================================================
-   Custom Dawat & Fatemi Typography Fonts
+   Custom Dawat & Fatemi Typography Fonts (All Weights Support)
    ========================================================================== */
 
+/* Al-Fatemi */
 @font-face {
   font-family: 'Al-Fatemi';
   src: url('../fonts/Al-Fatemi.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Al-Fatemi';
+  src: url('../fonts/Al-Fatemi.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
+/* Al-Kanz */
 @font-face {
   font-family: 'Al-Kanz';
   src: url('../fonts/Al-Kanz.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: 'Amiri';
-  src: url('../fonts/Amiri-Regular.ttf') format('truetype');
-  font-weight: normal;
+  font-family: 'Al-Kanz';
+  src: url('../fonts/Al-Kanz.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Kanz-al-Lulu';
-  src: url('../fonts/Kanz-al-Lulu.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* Kanz-al-Marjaan */
 @font-face {
   font-family: 'Kanz-al-Marjaan';
   src: url('../fonts/Kanz-al-Marjaan.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kanz-al-Marjaan';
+  src: url('../fonts/Kanz-al-Marjaan.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
+/* Kanz-al-Lulu */
+@font-face {
+  font-family: 'Kanz-al-Lulu';
+  src: url('../fonts/Kanz-al-Lulu.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kanz-al-Lulu';
+  src: url('../fonts/Kanz-al-Lulu.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Kanz-al-Yaqoot */
 @font-face {
   font-family: 'Kanz-al-Yaqoot';
   src: url('../fonts/Kanz-al-Yaqoot.ttf') format('truetype');
-  font-weight: normal;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kanz-al-Yaqoot';
+  src: url('../fonts/Kanz-al-Yaqoot.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Amiri */
+@font-face {
+  font-family: 'Amiri';
+  src: url('../fonts/Amiri-Regular.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amiri';
+  src: url('../fonts/Amiri-Regular.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }

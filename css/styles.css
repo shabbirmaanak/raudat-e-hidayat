@@ -580,8 +580,8 @@ body {
 }
 
 .card-speaker-name {
-  font-family: var(--font-arabic);
-  font-size: 1.15rem;
+  font-family: var(--font-arabic) !important;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--theme-lapis);
   direction: rtl;
@@ -594,9 +594,12 @@ body {
 }
 
 .card-volume-ref {
-  font-size: 0.78rem;
+  font-family: var(--font-arabic) !important;
+  font-size: 0.85rem;
   color: var(--theme-gold-dark);
   font-weight: 600;
+  direction: rtl;
+  text-align: right;
 }
 
 .card-top-right {
