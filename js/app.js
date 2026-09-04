@@ -448,8 +448,8 @@ function renderCard(item) {
 
       <!-- Collapsible Translations Section -->
       <div class="card-translations-wrapper ${autoExpand ? 'expanded' : ''}">
-        <button class="card-translations-toggle" onclick="toggleCardTranslations(this)" aria-expanded="${autoExpand ? 'true' : 'false'}" title="الترجمة والشرح">
-          <span class="toggle-label-arabic">الترجمة والشرح</span>
+        <button class="card-translations-toggle" onclick="toggleCardTranslations(this)" aria-expanded="${autoExpand ? 'true' : 'false'}" title="معنى انے فحوى">
+          <span class="toggle-label-arabic">معنى انے فحوى</span>
           <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
