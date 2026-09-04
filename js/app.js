@@ -84,6 +84,16 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+// Capitalize the first letter of each sentence grammatically
+function capitalizeEnglishSentences(text) {
+  if (!text) return '';
+  return text
+    .replace(/(^|[\n\r]+)([\s"'\(\[\{‘“]*)([a-z])/g, (m, p1, p2, p3) => p1 + p2 + p3.toUpperCase())
+    .replace(/([\.\!\?]\s+["'\(\[\{‘“]*)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase())
+    .replace(/\bi\b/g, 'I')
+    .replace(/\bi'([a-z]+)/g, "I'$1");
+}
+
 // Highlight matching words in text
 function highlightText(text, query, isArabic = false) {
   if (!query || !text) return escapeHtml(text);
@@ -339,7 +349,7 @@ function updateFavoritesCount() {
 function formatCitation(item) {
   const isMamlook = item.stated_by && item.stated_by.includes('مملوك');
   const speakerText = isMamlook ? `${item.stated_by}\n(سيدنا محمد برهان الدين رض)` : item.stated_by;
-  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${speakerText}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${item.english_translation}\n\n— _Raudat al-Hidayat_`;
+  return `✨ *${item.reference} - #${item.serial_num}*\n👤 *${speakerText}*\n\n📜 *${item.arabic}*\n\n📖 *Lisan al-Dawat:*\n${item.ld_translation}\n\n🌐 *English:*\n${capitalizeEnglishSentences(item.english_translation)}\n\n— _Raudat al-Hidayat_`;
 }
 
 // Render Results
@@ -397,7 +407,7 @@ function renderCard(item) {
   const isFav = state.favorites.has(item.id);
   const arabicHighlighted = highlightText(item.arabic, state.query, true);
   const ldHighlighted = highlightText(item.ld_translation, state.query, true);
-  const enHighlighted = highlightText(item.english_translation, state.query, false);
+  const enHighlighted = highlightText(capitalizeEnglishSentences(item.english_translation), state.query, false);
   const speakerHighlighted = highlightText(item.stated_by, state.query, true);
   const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by, item.id);
   const isMamlook = item.stated_by && item.stated_by.includes('مملوك');
@@ -506,7 +516,7 @@ function renderTable(items) {
                 </td>
                 <td class="td-arabic">${highlightText(item.arabic, state.query, true)}</td>
                 <td class="td-ld">${highlightText(item.ld_translation, state.query, true)}</td>
-                <td class="td-en">${highlightText(item.english_translation, state.query, false)}</td>
+                <td class="td-en">${highlightText(capitalizeEnglishSentences(item.english_translation), state.query, false)}</td>
                 <td>
                   <div style="display:flex;gap:0.35rem;">
                     <button class="icon-btn-sm ${isFav ? 'active-fav' : ''}" onclick="toggleFavorite(${item.id})" title="Bookmark">
@@ -752,7 +762,7 @@ function renderModalContent() {
       <div class="card-en-content" style="padding:1.1rem 1.35rem;">
         <div class="card-en-label">English Translation</div>
         <div class="card-en-text" style="font-size:1.05rem;">
-          ${escapeHtml(item.english_translation)}
+          ${escapeHtml(capitalizeEnglishSentences(item.english_translation))}
         </div>
       </div>
     </div>
