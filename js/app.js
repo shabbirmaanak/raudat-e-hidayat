@@ -157,7 +157,8 @@ function getCategoryLabel(statedBy) {
 function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum) {
   const easternDigits = toEasternArabicDigits(serialNum);
   const categoryLabel = getCategoryLabel(statedBy);
-  const fontSize = categoryLabel.length > 5 ? 11 : 13.5;
+  const fontSizeNum = easternDigits.length > 2 ? 30 : 35;
+  const fontSizeLabel = categoryLabel.length > 5 ? 16 : 18.5;
 
   return `
     <div class="cartouche-badge-container" title="${escapeHtml(reference)} • #${serialNum} • ${escapeHtml(categoryLabel)}">
@@ -213,10 +214,10 @@ function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum
         </g>
         
         <!-- Eastern Arabic Number -->
-        <text x="50" y="68" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="29" font-weight="bold" fill="#1b2a47">${easternDigits}</text>
+        <text x="50" y="69" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="${fontSizeNum}" font-weight="bold" fill="#1b2a47">${easternDigits}</text>
         
         <!-- Category Label -->
-        <text x="50" y="95" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="${fontSize}" font-weight="bold" fill="#9e1e1e">${categoryLabel}</text>
+        <text x="50" y="99" text-anchor="middle" font-family="'Al-Fatemi', 'Amiri', serif" font-size="${fontSizeLabel}" font-weight="bold" fill="#9e1e1e">${categoryLabel}</text>
       </svg>
     </div>
   `;
@@ -470,8 +471,7 @@ function renderCard(item) {
       </div>
 
       <!-- Card Footer -->
-      <div class="card-footer-bar">
-        <span class="card-id-badge">ID: #${item.id}</span>
+      <div class="card-footer-bar" style="justify-content: flex-end;">
         <div class="card-action-buttons">
           <button class="btn btn-icon" title="Copy Arabic" onclick="copyArabicText(${item.id})">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>

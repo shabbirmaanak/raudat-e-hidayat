@@ -609,11 +609,12 @@ body {
 
 .card-volume-ref {
   font-family: var(--font-arabic) !important;
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   color: var(--theme-gold-dark);
-  font-weight: 600;
+  font-weight: 700;
   direction: rtl;
   text-align: right;
+  margin-top: 0.15rem;
 }
 
 .card-top-right {
@@ -624,13 +625,13 @@ body {
 
 /* Vector Cartouche Badge */
 .cartouche-badge-container {
-  width: 58px;
-  height: 76px;
+  width: 68px;
+  height: 90px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.14));
 }
 
 .cartouche-svg {
