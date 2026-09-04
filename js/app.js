@@ -125,21 +125,22 @@ function highlightText(text, query, isArabic = false) {
 }
 
 // Generate the authentic Golden Cartouche SVG Medallion from the book
-function renderCartoucheSVG(serialNum, reference, statedBy) {
+function renderCartoucheSVG(serialNum, reference, statedBy, uniqueId = serialNum) {
   const easternDigits = toEasternArabicDigits(serialNum);
-  const isHadith = (reference && reference.includes('1')) || (statedBy && statedBy.includes('رسول الله'));
+  const isHadith = (reference && reference.includes('1')) || (statedBy && (statedBy.includes('رسول الله') || statedBy.includes('صلع')));
   const categoryLabel = isHadith ? 'الحديث' : 'الكلام';
+  const idStr = String(uniqueId).replace(/\s+/g, '_');
 
   return `
     <div class="cartouche-badge-container" title="${escapeHtml(reference)} • #${serialNum}">
       <svg class="cartouche-svg" viewBox="0 0 100 135" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="goldGrad-${serialNum}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="goldGrad-${idStr}" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#e2c482" />
             <stop offset="50%" stop-color="#c59f52" />
             <stop offset="100%" stop-color="#ab8232" />
           </linearGradient>
-          <filter id="badgeShadow-${serialNum}" x="-10%" y="-10%" width="120%" height="120%">
+          <filter id="badgeShadow-${idStr}" x="-10%" y="-10%" width="120%" height="120%">
             <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.18" />
           </filter>
         </defs>
@@ -154,7 +155,7 @@ function renderCartoucheSVG(serialNum, reference, statedBy) {
                  C10 94, 24 82, 18 72 
                  C12 62, 4 46, 14 32 
                  C24 18, 44 16, 50 4 Z" 
-              fill="#1e355b" filter="url(#badgeShadow-${serialNum})"/>
+              fill="#1e355b" filter="url(#badgeShadow-${idStr})"/>
               
         <!-- Inner Gold Parchment Field -->
         <path d="M50 8 
@@ -166,7 +167,7 @@ function renderCartoucheSVG(serialNum, reference, statedBy) {
                  C15 90, 27 79, 21 69 
                  C16 60, 9 46, 18 34 
                  C27 21, 45 19, 50 8 Z" 
-              fill="url(#goldGrad-${serialNum})" stroke="#1a2d4f" stroke-width="1.2"/>
+              fill="url(#goldGrad-${idStr})" stroke="#1a2d4f" stroke-width="1.2"/>
               
         <!-- Inner Filigree Line -->
         <path d="M50 12 
@@ -373,7 +374,7 @@ function renderCard(item) {
   const ldHighlighted = highlightText(item.ld_translation, state.query, true);
   const enHighlighted = highlightText(item.english_translation, state.query, false);
   const speakerHighlighted = highlightText(item.stated_by, state.query, true);
-  const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by);
+  const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by, item.id);
 
   return `
     <div class="kalam-card" data-id="${item.id}">
@@ -656,7 +657,7 @@ function renderModalContent() {
   const isFav = state.favorites.has(item.id);
   const container = document.getElementById('detailModalContainer');
   if (!container) return;
-  const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by);
+  const cartoucheBadge = renderCartoucheSVG(item.serial_num, item.reference, item.stated_by, `modal_${item.id}`);
 
   container.innerHTML = `
     <div class="modal-header">
