@@ -246,37 +246,18 @@ body {
 
 /* Hero Section */
 .hero-section {
-  padding: 2.25rem 0 1.5rem;
+  padding: 1.5rem 0 1rem;
   text-align: center;
-}
-
-.hero-bismillah {
-  font-family: var(--font-arabic);
-  font-size: 2.4rem;
-  color: var(--theme-lapis);
-  margin-bottom: 0.4rem;
-  line-height: 1.2;
-}
-
-[data-theme="dark"] .hero-bismillah {
-  color: var(--theme-gold);
 }
 
 .hero-title-arabic {
   font-family: var(--font-arabic);
-  font-size: 2.8rem;
+  font-size: 3rem;
   font-weight: 700;
   color: var(--theme-crimson);
-  margin-bottom: 0.25rem;
+  margin-bottom: 1.25rem;
   line-height: 1.2;
   letter-spacing: 0.02em;
-}
-
-.hero-subtitle {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  max-width: 720px;
-  margin: 0 auto 1.5rem;
 }
 
 /* Search Box Component */
