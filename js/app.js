@@ -796,69 +796,54 @@ function pickRandomKalam() {
 }
 
 // ==========================================
-// Visitor Tracking & Web Analytics
+// Silent Admin Visitor Tracking (Database Logging)
 // ==========================================
-const visitorStats = {
-  globalVisits: null,
-  localVisits: 1,
-  firstVisitDate: null,
-  sessionSearches: 0
-};
-
 function initVisitorTracking() {
   try {
-    // 1. Local Device Visit Tracking
-    const now = new Date();
-    const storedFirstVisit = localStorage.getItem('rh_first_visit');
-    if (!storedFirstVisit) {
-      const formattedDate = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-      localStorage.setItem('rh_first_visit', formattedDate);
-      visitorStats.firstVisitDate = formattedDate;
-    } else {
-      visitorStats.firstVisitDate = storedFirstVisit;
+    // Only log once per session
+    if (sessionStorage.getItem('rh_visit_logged')) return;
+
+    let sessionId = localStorage.getItem('rh_visitor_session_id');
+    if (!sessionId) {
+      sessionId = 'v_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now().toString(36);
+      localStorage.setItem('rh_visitor_session_id', sessionId);
     }
+    sessionStorage.setItem('rh_visit_logged', '1');
 
-    // Local visit counter with session deduplication
-    const isNewSession = !sessionStorage.getItem('rh_session_active');
-    let localVisits = parseInt(localStorage.getItem('rh_local_visits') || '0', 10);
-    if (isNewSession) {
-      sessionStorage.setItem('rh_session_active', '1');
-      localVisits += 1;
-      localStorage.setItem('rh_local_visits', localVisits.toString());
-    }
-    visitorStats.localVisits = localVisits || 1;
+    const screenRes = (window.screen.width || 0) + 'x' + (window.screen.height || 0);
+    const lang = navigator.language || navigator.userLanguage || 'unknown';
+    const referrer = document.referrer ? (new URL(document.referrer).hostname || document.referrer) : 'direct';
+    const userAgent = navigator.userAgent || 'unknown';
 
-    // 2. Global Live Visitor Counter (CounterAPI)
-    const counterNamespace = 'raudat-e-hidayat-shabbirmaanak';
-    const counterKey = 'visits';
-    const counterEndpoint = isNewSession
-      ? `https://api.counterapi.dev/v1/${counterNamespace}/${counterKey}/up`
-      : `https://api.counterapi.dev/v1/${counterNamespace}/${counterKey}`;
+    const TURSO_URL = 'https://raudat-e-hidayat-shabbirmaanak.aws-ap-south-1.turso.io/v2/pipeline';
+    const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODgxNjEwOTcsImlkIjoiMDFhMDU2YjQtZTEwMS03MTU3LWE4YWQtMzBhM2RkNzQxNmYzIiwia2lkIjoicnNxM3J2QXI5MFloTkV0SGltMjhrRjVoUzBTbG1xcHc0M3JOVFRCaEZPUSIsInJpZCI6IjM1ZDNmOWViLWI1NDItNGJlMS04YjI2LTgxMTc1NTRiMDQzMSJ9.4AnWNvmQv4tos5c-QO36OndC4Ug1up6dIzJEDcXuy96GxBL1vEzoNkSxeb4yOn6dKHJwY1R5T9u3oE9zmCrjBw';
 
-    fetch(counterEndpoint)
-      .then(res => {
-        if (!res.ok) throw new Error('Status ' + res.status);
-        return res.json();
-      })
-      .then(data => {
-        if (data && typeof data.count === 'number') {
-          visitorStats.globalVisits = data.count;
-          updateVisitorBadgeUI(data.count);
+    const payload = {
+      requests: [{
+        type: 'execute',
+        stmt: {
+          sql: 'INSERT INTO visitor_logs (session_id, language, screen_res, referrer, user_agent) VALUES (?, ?, ?, ?, ?);',
+          args: [
+            { type: 'text', value: sessionId },
+            { type: 'text', value: lang },
+            { type: 'text', value: screenRes },
+            { type: 'text', value: referrer },
+            { type: 'text', value: userAgent }
+          ]
         }
-      })
-      .catch(err => {
-        const fallbackCount = Math.max(visitorStats.localVisits, 1);
-        updateVisitorBadgeUI(fallbackCount);
-      });
-  } catch (e) {
-    console.log('Visitor tracking notice:', e);
-  }
-}
+      }]
+    };
 
-function updateVisitorBadgeUI(count) {
-  const el = document.getElementById('visitorCountNum');
-  if (el) {
-    el.textContent = count ? Number(count).toLocaleString() : '1+';
+    fetch(TURSO_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${TURSO_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  } catch (e) {
+    // Fail silently without disrupting user experience
   }
 }
 
@@ -883,27 +868,6 @@ function openStatsModal() {
   const sortedSpeakers = Object.entries(speakerCounts).sort((a, b) => b[1] - a[1]);
 
   document.getElementById('statsModalBody').innerHTML = `
-    <h4 style="margin-bottom:0.75rem;font-size:1rem;color:var(--theme-lapis);">👥 Visitor & Traffic Insights</h4>
-    <div class="stats-grid" style="margin-bottom:1.5rem;">
-      <div class="stat-box">
-        <div class="stat-number">${visitorStats.globalVisits ? visitorStats.globalVisits.toLocaleString() : (visitorStats.localVisits || 1)}</div>
-        <div class="stat-label">Total Page Visits</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number">${visitorStats.localVisits}</div>
-        <div class="stat-label">Visits on this Device</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number">${visitorStats.sessionSearches}</div>
-        <div class="stat-label">Searches this Session</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" style="font-size:1.1rem;padding-top:0.35rem;">${visitorStats.firstVisitDate || 'Today'}</div>
-        <div class="stat-label">First Visited</div>
-      </div>
-    </div>
-
-    <h4 style="margin-bottom:0.75rem;font-size:1rem;color:var(--theme-lapis);">📖 Dataset Overview</h4>
     <div class="stats-grid" style="margin-bottom:1.5rem;">
       <div class="stat-box">
         <div class="stat-number">${total}</div>
@@ -1089,7 +1053,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.query = val;
         state.currentPage = 1;
         state.selectedTopic = null;
-        if (val.trim()) visitorStats.sessionSearches++;
         document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
         renderApp();
       }, 150);
